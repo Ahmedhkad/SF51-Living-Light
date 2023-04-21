@@ -20,8 +20,8 @@ PubSubClient client(espClient);
 
 boolean Button1State = false;
 boolean Button2State = false;
-AceButton button1(Btn1);
-AceButton button2(Btn2);
+AceButton button1(BtnCold);
+AceButton button2(BtnWarm);
 
 StaticJsonDocument<100> doc;
 StaticJsonDocument<300> updater;
@@ -95,48 +95,32 @@ void callback(char *topic, byte *payload, unsigned int length)
 
   switch (device)
   {
-  case 0:
-    if (valuejson == 1)
-    {
-      digitalWrite(Relay2, LOW);
-      client.publish("Relay2", "ON");
-      digitalWrite(LED, LOW);
-    }
-    else if (valuejson == 0)
-    {
-      digitalWrite(Relay2, HIGH);
-      client.publish("Relay2", "OFF");
-      digitalWrite(LED, HIGH);
-    }
-    break;
-
   case 1:
     if (valuejson == 1)
     {
-      digitalWrite(Relay1, LOW);
-      client.publish("Relay1", "ON");
-      digitalWrite(LED, LOW);
+      digitalWrite(LivingLightWarm, LOW);
+      client.publish("LivingLightWarm", "ON");
     }
     else if (valuejson == 0)
     {
-      digitalWrite(Relay1, HIGH);
-      client.publish("Relay1", "OFF");
-      digitalWrite(LED, HIGH);
+      digitalWrite(LivingLightWarm, HIGH);
+      client.publish("LivingLightWarm", "OFF");
     }
     break;
 
   case 2:
     if (valuejson == 1)
     {
-
-      client.publish("Relay2xx", "ON");
+      digitalWrite(LivingLightCold, LOW);
+      client.publish("LivingLightCold", "ON");
     }
     else if (valuejson == 0)
     {
-
-      client.publish("Relay2xx", "OFF");
+      digitalWrite(LivingLightCold, HIGH);
+      client.publish("LivingLightCold", "OFF");
     }
     break;
+
   default:
     Serial.print("Err device in case-switch invalid.");
     break;
@@ -170,11 +154,10 @@ void reconnect()
 
 void setup()
 {
-  pinMode(Relay1, OUTPUT);
-  pinMode(Relay2, OUTPUT);
-  pinMode(LED, OUTPUT);
-  pinMode(Btn1, INPUT);
-  pinMode(Btn2, INPUT);
+  pinMode(LivingLightCold, OUTPUT);
+  pinMode(LivingLightWarm, OUTPUT);
+  pinMode(BtnCold, INPUT);
+  pinMode(BtnWarm, INPUT);
 
   Serial.begin(115200); // debug print on Serial Monitor
   setup_wifi();
@@ -208,7 +191,7 @@ void loop()
       char buffer[200];
       updater["Disconnected"] = count;
       serializeJson(updater, buffer);
-      client.publish(mqttWillTopic, buffer);
+      client.publish(mqttWillTopic, buffer, true);
       lastCount = count;
     }
   }
@@ -224,33 +207,33 @@ void handleEvent(AceButton *button, uint8_t eventType, uint8_t buttonState)
   switch (eventType)
   {
   case AceButton::kEventPressed:
-    if (button->getPin() == Relay1)
+    if (button->getPin() == BtnCold)
     {
       if (Button1State)
       {
         Button1State = false;
-        digitalWrite(Relay1, LOW);
-        client.publish("Relay1", "ON");
+        digitalWrite(LivingLightCold, LOW);
+        client.publish("LivingLightCold", "ON");
       }
       else
       {
-        digitalWrite(Relay1, HIGH);
-        client.publish("Relay1", "LOW");
+        digitalWrite(LivingLightCold, HIGH);
+        client.publish("LivingLightCold", "LOW");
         Button1State = true;
       }
     }
-    if (button->getPin() == Relay2)
+    if (button->getPin() == BtnWarm)
     {
       if (Button2State)
       {
         Button2State = false;
-        digitalWrite(Relay2, LOW);
-        client.publish("Relay2", "ON");
+        digitalWrite(LivingLightWarm, LOW);
+        client.publish("LivingLightWarm", "ON");
       }
       else
       {
-        digitalWrite(Relay2, HIGH);
-        client.publish("Relay2", "LOW");
+        digitalWrite(LivingLightWarm, HIGH);
+        client.publish("LivingLightWarm", "LOW");
         Button2State = true;
       }
     }

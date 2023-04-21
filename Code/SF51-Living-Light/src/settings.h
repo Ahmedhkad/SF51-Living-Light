@@ -12,10 +12,9 @@
 
 /* I/O pins selection of NodeMCU */ 
 
-#define Relay1       13 //D7
-#define Relay2       12 //D6
+#define LivingLightCold       13 //D7
+#define LivingLightWarm      12 //D6
 
-#define Btn1         5 //D1
-#define Btn2         4 //D2
+#define BtnCold         5 //D1
+#define BtnWarm         4 //D2
 
-#define LED          0 //D3
