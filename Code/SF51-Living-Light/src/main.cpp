@@ -134,7 +134,13 @@ void reconnect()
   {
     Serial.print("Attempting MQTT connection...");
     // Attempt to connect
-    if (client.connect(mqttClient, mqttName, mqttPASS, mqttWillTopic, 0, true, "offline"))
+        uint32_t timestamp=millis()/1000;
+    char clientid[23];
+    snprintf(clientid,23, mqttClient"%02X",timestamp);
+    Serial.print("Client ID: ");
+    Serial.println(clientid);
+
+    if (client.connect(clientid, mqttName, mqttPASS, mqttWillTopic, 0, true, "offline"))
     {
       // Serial.println("Connected");
       // Once connected, publish an announcement...
@@ -191,7 +197,7 @@ void loop()
       char buffer[200];
       updater["Disconnected"] = count;
       serializeJson(updater, buffer);
-      client.publish(mqttWillTopic, buffer, true);
+      client.publish(mqttDisconnectTopic, buffer, true);
       lastCount = count;
     }
   }
